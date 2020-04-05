@@ -1,7 +1,6 @@
 package com.athtech;
 
-import com.athtech.model.EmptyPosition;
-import com.athtech.model.Position;
+import com.athtech.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,5 +60,97 @@ public class Utility {
 //    public static void findTheSizeOfTheDestroyTree(int dimensionsOfTheBoard, int numberOfObstacles , int numOfPawnsForEachPlayer) {
 //        initialPossibleMovesForDestroyTree = numOfPawnsForEachPlayer + numberOfObstacles; not all of them possible! -> not fixed, DestroyTree < DeploymentTree
 //    }
+
+    public static String evaluateTerminalStateWhite(List<ArrayList<Position>> board) {
+
+        int evaluation = 0;
+        int totalStrength = 0;
+        int numOfPawns = 0;
+
+        for (int row = 0; row < board.size(); row++) {
+
+            for (int column = 0; column < board.size(); column++) {
+
+                if (board.get(row).get(column).getContent() instanceof WhitePawn) {
+
+                    totalStrength += ((WhitePawn) board.get(row).get(column).getContent()).getStrength();
+                    numOfPawns++;
+                    evaluation += miniHeuristic(row,column,board,"white");
+                }
+            }
+        }
+        evaluation = evaluation + totalStrength + numOfPawns;
+
+        return "Evaluation White: "+evaluation;
+    }
+
+    public static String evaluateTerminalStateBlack(List<ArrayList<Position>> board) {
+
+        int evaluation = 0;
+        int totalStrength = 0;
+        int numOfPawns = 0;
+
+        for (int row = 0; row < board.size(); row++) {
+
+            for (int column = 0; column < board.size(); column++) {
+
+                if (board.get(row).get(column).getContent() instanceof BlackPawn) {
+
+                    totalStrength += ((BlackPawn) board.get(row).get(column).getContent()).getStrength();
+                    numOfPawns++;
+                    evaluation += miniHeuristic(row,column,board,"black");
+                }
+            }
+        }
+        evaluation = evaluation + totalStrength + numOfPawns;
+
+        return "Evaluation Black: "+evaluation;
+    }
+
+    public static int miniHeuristic(int positionRow, int positionColumn, List<ArrayList<Position>> board , String color) {
+
+        int evaluation = 0;
+        int blackStrength = 0;
+        int whiteStrength = 0;
+
+        for(int row = positionRow -1 ; row <= positionRow +1 ; row++){
+
+            for(int column = positionColumn -1 ; column <= positionColumn+1 ; column++){
+
+                if (row < board.size() && row >= 0 && column < board.size() && column >= 0) {
+                    if (board.get(row).get(column).getContent() instanceof WhitePawn) {
+                        whiteStrength += ((WhitePawn) board.get(row).get(column).getContent()).getStrength();
+                    }
+                    if (board.get(row).get(column).getContent() instanceof BlackPawn) {
+                        blackStrength += ((BlackPawn) board.get(row).get(column).getContent()).getStrength();
+                    }
+                }
+
+            }
+
+        }
+
+        if(color.equals("white")){
+            if (whiteStrength > blackStrength) {
+                evaluation = 1;
+            }
+            if (blackStrength > whiteStrength) {
+                evaluation = -1;
+            }
+        }
+
+        if(color.equals("black")){
+            if (whiteStrength > blackStrength) {
+                evaluation = -1;
+            }
+            if (blackStrength > whiteStrength) {
+                evaluation = 1;
+            }
+        }
+
+        return evaluation;
+
+    }
+
 
 }
