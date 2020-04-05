@@ -13,8 +13,12 @@ public class Main {
         int numberOfObstacles = 5;
 
         List<ArrayList<Position>> board = Prolognite.initializeBoard(dimensionsOfTheGame, numberOfObstacles);
-        Prolognite.deploymentStage(board);
-        Utility.printBoard(board);
+//        Prolognite.deploymentStage(board,board.size());
+//        Utility.printBoard(board);
+//        Utility.findThePossibleMoves(board,1);
+
+        Utility.findTheSizeOfTheDeploymentTree(dimensionsOfTheGame,numberOfObstacles);
+        System.out.println(20*19*18*17*16*15*14*13*12*11);
 
     }
 }

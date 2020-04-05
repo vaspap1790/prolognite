@@ -54,10 +54,11 @@ public class Prolognite {
         }
     }
 
-    public static void deploymentStage(List<ArrayList<Position>> board) {
-        for (int i = 1; i <= board.size(); i++) {
+    public static void deploymentStage(List<ArrayList<Position>> board , int moves) {
+        for (int i = 1; i <= moves; i++) {
             deployNthPawn(board, "white", i);
             deployNthPawn(board, "black", i);
         }
     }
+
 }
