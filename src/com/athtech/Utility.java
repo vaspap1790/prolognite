@@ -5,6 +5,7 @@ import com.athtech.model.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static com.athtech.Prolognite.deploymentStage;
 
@@ -61,8 +62,12 @@ public class Utility {
 //        initialPossibleMovesForDestroyTree = numOfPawnsForEachPlayer + numberOfObstacles; not all of them possible! -> not fixed, DestroyTree < DeploymentTree
 //    }
 
-    public static String evaluateTerminalStateWhite(List<ArrayList<Position>> board) {
+    public static int evaluateTerminalStateWhite(List<ArrayList<Position>> board) {
 
+        List<ArrayList<Integer>> possibleDefeated = new ArrayList<>();
+        for(int i = 0 ; i <=5 ; i++){
+            possibleDefeated.add(new ArrayList<>());
+        }
         int evaluation = 0;
         int totalStrength = 0;
         int numOfPawns = 0;
@@ -75,17 +80,34 @@ public class Utility {
 
                     totalStrength += ((WhitePawn) board.get(row).get(column).getContent()).getStrength();
                     numOfPawns++;
-                    evaluation += miniHeuristic(row,column,board,"white");
+                    List<ArrayList<Integer>> possibleDefeatedMini = miniHeuristicWhite(row, column, board, ((WhitePawn) board.get(row).get(column).getContent()).getStrength());
+                    for(int i = 1 ; i< possibleDefeatedMini.size(); i++){
+                        for(int j = 0 ; j< possibleDefeatedMini.get(i).size(); j++){
+                            possibleDefeated.get(i).add(possibleDefeatedMini.get(i).get(j));
+                        }
+                    }
+                    evaluation += possibleDefeatedMini.get(0).get(0);
                 }
             }
         }
         evaluation = evaluation + totalStrength + numOfPawns;
 
-        return "Evaluation White: "+evaluation;
+        for(ArrayList list : possibleDefeated){
+            if(list.size()>1){
+                evaluation = evaluation - (list.size()-1);
+            }
+        };
+
+        System.out.println("Evaluation White: " + evaluation);
+        return evaluation;
     }
 
-    public static String evaluateTerminalStateBlack(List<ArrayList<Position>> board) {
+    public static int evaluateTerminalStateBlack(List<ArrayList<Position>> board) {
 
+        List<ArrayList<Integer>> possibleDefeated = new ArrayList<>();
+        for(int i = 0 ; i <=5 ; i++){
+            possibleDefeated.add(new ArrayList<>());
+        }
         int evaluation = 0;
         int totalStrength = 0;
         int numOfPawns = 0;
@@ -98,58 +120,120 @@ public class Utility {
 
                     totalStrength += ((BlackPawn) board.get(row).get(column).getContent()).getStrength();
                     numOfPawns++;
-                    evaluation += miniHeuristic(row,column,board,"black");
+                    List<ArrayList<Integer>> possibleDefeatedMini = miniHeuristicBlack(row, column, board, ((BlackPawn) board.get(row).get(column).getContent()).getStrength());
+                    for(int i = 1 ; i< possibleDefeatedMini.size(); i++){
+                        for(int j = 0 ; j< possibleDefeatedMini.get(i).size(); j++){
+                            possibleDefeated.get(i).add(possibleDefeatedMini.get(i).get(j));
+                        }
+                    }
+                    evaluation += possibleDefeatedMini.get(0).get(0);
                 }
             }
         }
         evaluation = evaluation + totalStrength + numOfPawns;
 
-        return "Evaluation Black: "+evaluation;
+        for(ArrayList list : possibleDefeated){
+            if(list.size()>1){
+                evaluation = evaluation - (list.size()-1);
+            }
+        };
+
+        System.out.println("Evaluation Black: " + evaluation);
+        return evaluation;
     }
 
-    public static int miniHeuristic(int positionRow, int positionColumn, List<ArrayList<Position>> board , String color) {
 
-        int evaluation = 0;
-        int blackStrength = 0;
+    public static List<ArrayList<Integer>> miniHeuristicWhite(int positionRow, int positionColumn, List<ArrayList<Position>> board, int strength) {
+
         int whiteStrength = 0;
+        List<ArrayList<Integer>> possibleDefeated = new ArrayList<>();
+        for(int i = 0 ; i <=5 ; i++){
+            possibleDefeated.add(new ArrayList<>());
+        }
 
-        for(int row = positionRow -1 ; row <= positionRow +1 ; row++){
+        for (int row = positionRow - 1; row <= positionRow + 1; row++) {
+            for (int column = positionColumn - 1; column <= positionColumn + 1; column++) {
 
-            for(int column = positionColumn -1 ; column <= positionColumn+1 ; column++){
-
-                if (row < board.size() && row >= 0 && column < board.size() && column >= 0) {
-                    if (board.get(row).get(column).getContent() instanceof WhitePawn) {
-                        whiteStrength += ((WhitePawn) board.get(row).get(column).getContent()).getStrength();
-                    }
+                if ((row < board.size() && row >= 0 && column < board.size() && column >= 0)&& !(positionRow == row && positionColumn == column)&& !(Math.abs(row - positionRow) == 1 && Math.abs(column - positionColumn) == 1)) {
                     if (board.get(row).get(column).getContent() instanceof BlackPawn) {
-                        blackStrength += ((BlackPawn) board.get(row).get(column).getContent()).getStrength();
+                        if (strength > ((BlackPawn) board.get(row).get(column).getContent()).getStrength()) {
+                            whiteStrength += 1;
+                            possibleDefeated.get(((BlackPawn) board.get(row).get(column).getContent()).getStrength()).add(((BlackPawn) board.get(row).get(column).getContent()).getStrength());
+                            System.out.println("+1 for "+ board.get(positionRow).get(positionColumn).getContent().toString());
+                        }
                     }
                 }
-
-            }
-
-        }
-
-        if(color.equals("white")){
-            if (whiteStrength > blackStrength) {
-                evaluation = 1;
-            }
-            if (blackStrength > whiteStrength) {
-                evaluation = -1;
             }
         }
+        possibleDefeated.get(0).add(whiteStrength);
+        System.out.println("White Strength " + whiteStrength);
+        return possibleDefeated;
+    }
 
-        if(color.equals("black")){
-            if (whiteStrength > blackStrength) {
-                evaluation = -1;
-            }
-            if (blackStrength > whiteStrength) {
-                evaluation = 1;
-            }
+    public static List<ArrayList<Integer>> miniHeuristicBlack(int positionRow, int positionColumn, List<ArrayList<Position>> board, int strength) {
+
+        int blackStrength = 0;
+        List<ArrayList<Integer>> possibleDefeated = new ArrayList<>();
+        for(int i = 0 ; i <=5 ; i++){
+            possibleDefeated.add(new ArrayList<>());
         }
 
-        return evaluation;
+        for (int row = positionRow - 1; row <= positionRow + 1; row++) {
+            for (int column = positionColumn - 1; column <= positionColumn + 1; column++) {
 
+                if ((row < board.size() && row >= 0 && column < board.size() && column >= 0) && !(positionRow == row && positionColumn == column)&& !(Math.abs(row - positionRow) == 1 && Math.abs(column - positionColumn) == 1)) {
+                    if (board.get(row).get(column).getContent() instanceof WhitePawn) {
+                        if (strength > ((WhitePawn) board.get(row).get(column).getContent()).getStrength()) {
+                            blackStrength += 1;
+                            possibleDefeated.get(((WhitePawn) board.get(row).get(column).getContent()).getStrength()).add(((WhitePawn) board.get(row).get(column).getContent()).getStrength());
+                            System.out.println("+1 for "+ board.get(positionRow).get(positionColumn).getContent().toString());
+                        }
+                    }
+                }
+            }
+        }
+        possibleDefeated.get(0).add(blackStrength);
+        System.out.println("Black Strength " + blackStrength);
+        return possibleDefeated;
+    }
+
+
+    public static int heuristicForBlack(List<ArrayList<Position>> board, String turn) {
+
+        int whiteStrength = evaluateTerminalStateWhite(board);
+        int blackStrength = evaluateTerminalStateBlack(board);
+
+        if(turn.equals("white")){
+            whiteStrength +=1;
+        }
+
+        if(turn.equals("black")){
+            blackStrength +=1;
+        }
+
+        int total = blackStrength - whiteStrength;
+
+        System.out.println("Heuristic Black: " + total);
+        return total;
+    }
+
+    public static int heuristicForWhite(List<ArrayList<Position>> board, String turn) {
+
+        int whiteStrength = evaluateTerminalStateWhite(board);
+        int blackStrength = evaluateTerminalStateBlack(board);
+
+        if(turn.equals("white")){
+            whiteStrength +=2;
+        }
+
+        if(turn.equals("black")){
+            blackStrength +=2;
+        }
+
+        int total = whiteStrength - blackStrength;
+
+        System.out.println("Heuristic White: " + total);
+        return total;
     }
 
 

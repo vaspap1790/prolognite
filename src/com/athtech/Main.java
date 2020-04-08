@@ -14,17 +14,17 @@ public class Main {
 
     public static void main(String[] args) throws ParseException {
 
-        System.out.println("*****************************************************************************************");
-        System.out.println("** 06/04/2020                                                      Athens Tech College **");
-        System.out.println("**                                                                                     **");
-        System.out.println("**                                                                                     **");
-        System.out.println("**             - Artificial Intelligence Techniques Coursework Handout 1 -             **");
-        System.out.println("**                                                                                     **");
-        System.out.println("**                             Papadimitrakopoulos Vasilis                             **");
-        System.out.println("**                                                                                     **");
-        System.out.println("*****************************************************************************************");
-
-        Menu.mainMenu();
+//        System.out.println("*****************************************************************************************");
+//        System.out.println("** 06/04/2020                                                      Athens Tech College **");
+//        System.out.println("**                                                                                     **");
+//        System.out.println("**                                                                                     **");
+//        System.out.println("**             - Artificial Intelligence Techniques Coursework Handout 1 -             **");
+//        System.out.println("**                                                                                     **");
+//        System.out.println("**                             Papadimitrakopoulos Vasilis                             **");
+//        System.out.println("**                                                                                     **");
+//        System.out.println("*****************************************************************************************");
+//
+//        Menu.mainMenu();
 
         int dimensionsOfTheGame = 5;
         int numberOfObstacles = 5;
@@ -56,9 +56,11 @@ public class Main {
         List<Integer> blackRowsT3 = Arrays.asList(4,4,1,5);
         List<Integer> blackColumnsT3 = Arrays.asList(2,3,1,4);
 
-//        Prolognite.generateState(board,obstacleRowsT1,obstacleColumnsT1,whiteRowsT1,whiteColumnsT1,strengths,blackRowsT1,blackColumnsT1,strengths);
+        Prolognite.generateState(board,obstacleRowsT1,obstacleColumnsT1,whiteRowsT1,whiteColumnsT1,strengths,blackRowsT1,blackColumnsT1,strengths);
 //        Prolognite.generateState(board,obstacleRowsT2,obstacleColumnsT2,whiteRowsT2,whiteColumnsT2,strengths,blackRowsT2,blackColumnsT2,strengthsT2black);
 //        Prolognite.generateState(board,obstacleRowsT3,obstacleColumnsT3,whiteRowsT3,whiteColumnsT3,strengths,blackRowsT3,blackColumnsT3,strengthsT3black);
-//        Utility.printBoard(board);
+        Utility.printBoard(board);
+
+        Utility.heuristicForBlack(board,"black");
     }
 }

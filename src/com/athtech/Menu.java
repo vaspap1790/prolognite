@@ -23,10 +23,10 @@ public class Menu {
             switch(input) {
                 case "0":
                     break;
-                case "1":
+                case "2":
                     question2();
                     break;
-                case "2":
+                case "4":
                     question4();
                     break;
                 default:
